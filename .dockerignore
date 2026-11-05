@@ -1,0 +1,22 @@
+.git
+.gitignore
+.venv
+venv
+__pycache__
+*.py[cod]
+.pytest_cache
+.mypy_cache
+.ruff_cache
+tests
+data
+logs
+*.log
+.env
+.env.local
+PRD-代码辅助开发Agent.md
+
+# 前端（独立镜像构建，不进入后端上下文）
+frontend
+node_modules
+.cache
+npm-debug.log*

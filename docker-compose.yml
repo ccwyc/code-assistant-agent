@@ -1,0 +1,44 @@
+# 代码辅助开发 Agent · 容器编排（后端 + 前端）
+# 启动：docker compose up --build -d
+# 访问：前端 http://127.0.0.1:8080 ｜ 后端 http://127.0.0.1:8000/docs
+# 日志：docker compose logs -f
+services:
+  code-assistant:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: code-assistant-agent:1.0.0
+    container_name: code-assistant-agent
+    env_file:
+      - .env
+    environment:
+      APP_HOST: 0.0.0.0
+      APP_PORT: 8000
+      LOG_LEVEL: INFO
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: code-assistant-frontend:1.0.0
+    container_name: code-assistant-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      code-assistant:
+        condition: service_healthy
+    restart: unless-stopped
+
